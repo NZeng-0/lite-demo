@@ -10,8 +10,10 @@ const emit = defineEmits(['close'])
 
 <template>
   <div
-    class="fixed right-0 top-0 h-full w-130 flex flex-col transform bg-white shadow-lg transition-transform duration-300"
-    :class="show ? 'translate-x-0' : 'translate-x-full'"
+    class="fixed right-0 top-0 h-full max-w-full w-130 w-130 w-screen flex flex-col transform bg-white shadow-lg transition-transform duration-300 md:max-w-130 md:w-130"
+    :class="[
+      show ? 'translate-x-0' : 'translate-x-full', // 移动端占满全屏，大屏固定宽度
+    ]"
   >
     <!-- 关闭按钮 -->
     <div class="p-4 text-right">
