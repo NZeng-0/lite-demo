@@ -16,11 +16,23 @@ export function useSpeech(newMessage: any) {
     // eslint-disable-next-line new-cap
     recognition = new (window as any).webkitSpeechRecognition()
     recognition.lang = 'zh-CN'
-    recognition.continuous = false
-    recognition.interimResults = false
+    recognition.continuous = true // ✅ 允许连续识别
+    recognition.interimResults = true // ✅ 获取临时识别结果
 
     recognition.onresult = (event: any) => {
-      newMessage.value = event.results[0][0].transcript
+      let finalText = ''
+      let interimText = ''
+
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        if (event.results[i].isFinal) {
+          finalText += event.results[i][0].transcript
+        }
+        else {
+          interimText += event.results[i][0].transcript
+        }
+      }
+
+      newMessage.value = finalText + interimText // ✅ 实时更新识别内容
     }
 
     recognition.onend = () => {
