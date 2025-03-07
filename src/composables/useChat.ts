@@ -11,6 +11,7 @@ export function useChat() {
   ])
   const newMessage = ref('')
   const tempInterimText = ref('')
+  const lastInterimText = ref('')
 
   const sendMessage = () => {
     if (!newMessage.value.trim())
@@ -32,5 +33,5 @@ export function useChat() {
     })
   }
 
-  return { chatContainer, messages, newMessage, tempInterimText, sendMessage }
+  return { chatContainer, messages, newMessage, tempInterimText, lastInterimText, sendMessage }
 }

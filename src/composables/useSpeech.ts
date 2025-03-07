@@ -1,11 +1,10 @@
 import { useToast } from 'vue-toastification'
 
-export function useSpeech(newMessage: any, tempInterimText: any) {
+export function useSpeech(newMessage: any, tempInterimText: any, lastInterimText: any) {
   const toast = useToast()
   const isRecording = ref(false)
   let recognition: any | null = null
 
-  // 语音识别
   function startRecording() {
     if (!('webkitSpeechRecognition' in window)) {
       toast.error('浏览器不支持语音识别')
@@ -16,8 +15,30 @@ export function useSpeech(newMessage: any, tempInterimText: any) {
     // eslint-disable-next-line new-cap
     recognition = new (window as any).webkitSpeechRecognition()
     recognition.lang = 'zh-CN'
-    recognition.continuous = true // 允许连续识别
-    recognition.interimResults = true // 获取临时识别结果
+    recognition.continuous = true
+    recognition.interimResults = true
+
+    /* recognition.onresult = (event: any) => {
+      let finalText = ''
+      let interimText = ''
+
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        if (event.results[i].isFinal) {
+          finalText += event.results[i][0].transcript
+        } else {
+          interimText += event.results[i][0].transcript
+        }
+      }
+
+      if (finalText) {
+        newMessage.value += finalText
+        tempInterimText.value = ''
+        return
+      }
+
+      // **追加而不是覆盖**
+      tempInterimText.value = interimText
+    } */
 
     recognition.onresult = (event: any) => {
       let finalText = ''
@@ -26,15 +47,15 @@ export function useSpeech(newMessage: any, tempInterimText: any) {
       for (let i = event.resultIndex; i < event.results.length; i++) {
         if (event.results[i].isFinal) {
           finalText += event.results[i][0].transcript
-        }
-        else {
+        } else {
           interimText += event.results[i][0].transcript
         }
       }
 
       if (finalText) {
         newMessage.value += finalText
-        // tempInterimText.value = ''
+        tempInterimText.value = ''
+        lastInterimText.value = ''
         return
       }
 
@@ -43,12 +64,24 @@ export function useSpeech(newMessage: any, tempInterimText: any) {
 
     recognition.onend = () => {
       isRecording.value = false
+
+      // **保留 `interimText`，避免丢失内容**
+      if (tempInterimText.value) {
+        newMessage.value = tempInterimText.value
+        tempInterimText.value = ''
+      }
+
+      // **自动重新启动**
+      setTimeout(() => {
+        if (isRecording.value) {
+          recognition.start()
+        }
+      }, 500)
     }
 
     recognition.start()
   }
 
-  // 停止语音识别
   function stopRecording() {
     if (recognition) {
       recognition.stop()
@@ -56,14 +89,12 @@ export function useSpeech(newMessage: any, tempInterimText: any) {
     }
   }
 
-  // 朗读消息
   function speakText(text: string) {
     const utterance = new SpeechSynthesisUtterance(text)
     utterance.lang = 'zh-CN'
     speechSynthesis.speak(utterance)
   }
 
-  // 组件销毁时，确保停止语音识别
   onUnmounted(() => {
     if (recognition) {
       recognition.stop()

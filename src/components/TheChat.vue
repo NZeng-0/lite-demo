@@ -2,11 +2,44 @@
 import { Icon } from '@iconify/vue'
 import { useChat, useSpeech } from '~/composables'
 
-const { chatContainer, messages, newMessage, tempInterimText, sendMessage } = useChat()
-const { isRecording, startRecording, stopRecording, speakText } = useSpeech(newMessage, tempInterimText)
+const {
+  chatContainer,
+  messages,
+  newMessage,
+  tempInterimText,
+  lastInterimText,
+  sendMessage,
+} = useChat()
+const {
+  isRecording,
+  startRecording,
+  stopRecording,
+  speakText,
+} = useSpeech(newMessage, tempInterimText, lastInterimText)
 
 function toggleRecording() {
   isRecording.value ? stopRecording() : startRecording()
+}
+
+const final = ref('')
+const textArea = ref<HTMLTextAreaElement | null>(null)
+
+watchEffect(() => {
+  if (tempInterimText.value === '' || tempInterimText.value === lastInterimText.value)
+    return
+
+  // 只追加最新的部分
+  const newText = tempInterimText.value.replace(lastInterimText.value, '')
+
+  final.value += newText
+  lastInterimText.value = tempInterimText.value
+})
+
+function adjustHeight() {
+  if (textArea.value) {
+    textArea.value.style.height = 'auto'
+    textArea.value.style.height = `${textArea.value.scrollHeight}px`
+  }
 }
 </script>
 
@@ -15,11 +48,7 @@ function toggleRecording() {
     <!-- 消息列表 -->
     <div ref="chatContainer" class="flex-1 overflow-auto p-4">
       <ChatMessage
-        v-for="(msg, index) in messages"
-        :key="index"
-        :text="msg.text"
-        :time="msg.time"
-        :sender="msg.sender"
+        v-for="(msg, index) in messages" :key="index" :text="msg.text" :time="msg.time" :sender="msg.sender"
         :speak-text="speakText"
       />
     </div>
@@ -28,18 +57,14 @@ function toggleRecording() {
     <div class="flex items-center rounded-lg bg-white p-2 shadow-md">
       <!-- 输入框 -->
       <textarea
-        v-model="tempInterimText"
-        h-auto
-        placeholder="请输入消息..."
-        class="flex-1 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        @keyup.enter="sendMessage"
+        v-model="final" placeholder="请输入消息..." flex-1 border border-gray-300 rounded-lg px-3 py-2
+        focus:outline-none focus:ring-2 focus:ring-blue-500 @keyup.enter="sendMessage" @input="adjustHeight"
       />
 
       <!-- 语音录制按钮 -->
       <button
         class="ml-2 flex items-center rounded-lg px-4 py-2 text-white transition-all duration-300"
-        :class="isRecording ? 'bg-red-500' : 'bg-green-500'"
-        @click="toggleRecording"
+        :class="isRecording ? 'bg-red-500' : 'bg-green-500'" @click="toggleRecording"
       >
         <Icon icon="heroicons-outline:microphone" class="mr-1 text-lg text-gray-500 hover:text-gray-700" />
         {{ isRecording ? '取消录制' : '开始录制' }}
