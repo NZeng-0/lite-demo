@@ -27,13 +27,13 @@ function toggleRecording() {
     <!-- 输入框 -->
     <div class="flex items-center rounded-lg bg-white p-2 shadow-md">
       <!-- 输入框 -->
-      <input
+      <textarea
         v-model="tempInterimText"
-        type="text"
+        h-auto
         placeholder="请输入消息..."
         class="flex-1 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
         @keyup.enter="sendMessage"
-      >
+      />
 
       <!-- 语音录制按钮 -->
       <button
