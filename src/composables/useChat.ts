@@ -10,6 +10,7 @@ export function useChat() {
     { text: '你好！请问有什么可以帮助您的？', time: new Date().toLocaleString(), sender: 'system' },
   ])
   const newMessage = ref('')
+  const tempInterimText = ref('')
 
   const sendMessage = () => {
     if (!newMessage.value.trim())
@@ -21,6 +22,7 @@ export function useChat() {
       sender: 'user',
     })
     newMessage.value = ''
+    tempInterimText.value = ''
 
     // 确保 DOM 更新后滚动到底部
     nextTick(() => {
@@ -30,5 +32,5 @@ export function useChat() {
     })
   }
 
-  return { chatContainer, messages, newMessage, sendMessage }
+  return { chatContainer, messages, newMessage, tempInterimText, sendMessage }
 }

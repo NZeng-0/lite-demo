@@ -29,6 +29,7 @@
     "@vitejs/plugin-vue": "^5.2.1",
     "@vue-macros/volar": "^0.30.14",
     "@vue/test-utils": "^2.4.6",
+    "crypto-js": "^4.2.0",
     "eslint": "^9.20.1",
     "eslint-plugin-format": "^1.0.1",
     "jsdom": "^26.0.0",

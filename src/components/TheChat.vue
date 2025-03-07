@@ -2,8 +2,8 @@
 import { Icon } from '@iconify/vue'
 import { useChat, useSpeech } from '~/composables'
 
-const { chatContainer, messages, newMessage, sendMessage } = useChat()
-const { isRecording, startRecording, stopRecording, speakText } = useSpeech(newMessage)
+const { chatContainer, messages, newMessage, tempInterimText, sendMessage } = useChat()
+const { isRecording, startRecording, stopRecording, speakText } = useSpeech(newMessage, tempInterimText)
 
 function toggleRecording() {
   isRecording.value ? stopRecording() : startRecording()
@@ -28,7 +28,7 @@ function toggleRecording() {
     <div class="flex items-center rounded-lg bg-white p-2 shadow-md">
       <!-- 输入框 -->
       <input
-        v-model="newMessage"
+        v-model="tempInterimText"
         type="text"
         placeholder="请输入消息..."
         class="flex-1 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"

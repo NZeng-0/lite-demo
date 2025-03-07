@@ -1,12 +1,12 @@
 import { useToast } from 'vue-toastification'
 
-export function useSpeech(newMessage: any) {
+export function useSpeech(newMessage: any, tempInterimText: any) {
   const toast = useToast()
   const isRecording = ref(false)
   let recognition: any | null = null
 
   // 语音识别
-  const startRecording = () => {
+  function startRecording() {
     if (!('webkitSpeechRecognition' in window)) {
       toast.error('浏览器不支持语音识别')
       return
@@ -16,8 +16,8 @@ export function useSpeech(newMessage: any) {
     // eslint-disable-next-line new-cap
     recognition = new (window as any).webkitSpeechRecognition()
     recognition.lang = 'zh-CN'
-    recognition.continuous = true // ✅ 允许连续识别
-    recognition.interimResults = true // ✅ 获取临时识别结果
+    recognition.continuous = true // 允许连续识别
+    recognition.interimResults = true // 获取临时识别结果
 
     recognition.onresult = (event: any) => {
       let finalText = ''
@@ -32,7 +32,13 @@ export function useSpeech(newMessage: any) {
         }
       }
 
-      newMessage.value = finalText + interimText // ✅ 实时更新识别内容
+      if (finalText) {
+        newMessage.value += finalText
+        // tempInterimText.value = ''
+        return
+      }
+
+      tempInterimText.value = interimText
     }
 
     recognition.onend = () => {
@@ -43,7 +49,7 @@ export function useSpeech(newMessage: any) {
   }
 
   // 停止语音识别
-  const stopRecording = () => {
+  function stopRecording() {
     if (recognition) {
       recognition.stop()
       isRecording.value = false
@@ -51,7 +57,7 @@ export function useSpeech(newMessage: any) {
   }
 
   // 朗读消息
-  const speakText = (text: string) => {
+  function speakText(text: string) {
     const utterance = new SpeechSynthesisUtterance(text)
     utterance.lang = 'zh-CN'
     speechSynthesis.speak(utterance)
