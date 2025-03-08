@@ -17,11 +17,11 @@ defineProps<{
     >
       {{ text }}
       <button
-        class="absolute top-5 opacity-0 transition-opacity duration-300 -translate-y-1/2 group-hover:opacity-100"
+        class="absolute top-5 transition-opacity duration-300 -translate-y-1/2"
         :class="sender === 'user' ? '-left-8' : '-right-8'"
         @click="speakText(text)"
       >
-        <Icon icon="heroicons-outline:speaker-wave" class="text-lg text-gray-500 hover:text-gray-700" />
+        <Icon icon="heroicons-outline:speaker-wave" class="text-lg text-gray-700" />
       </button>
     </div>
 

@@ -35,6 +35,11 @@ watchEffect(() => {
   lastInterimText.value = tempInterimText.value
 })
 
+function send(){
+  final.value = ''
+  sendMessage()
+}
+
 function adjustHeight() {
   if (textArea.value) {
     textArea.value.style.height = 'auto'
@@ -71,7 +76,7 @@ function adjustHeight() {
       </button>
 
       <!-- 发送按钮 -->
-      <button class="ml-2 rounded-lg bg-blue-500 px-4 py-2 text-white" @click="sendMessage">
+      <button class="ml-2 rounded-lg bg-blue-500 px-4 py-2 text-white" @click="send">
         发送
       </button>
     </div>

@@ -18,28 +18,6 @@ export function useSpeech(newMessage: any, tempInterimText: any, lastInterimText
     recognition.continuous = true
     recognition.interimResults = true
 
-    /* recognition.onresult = (event: any) => {
-      let finalText = ''
-      let interimText = ''
-
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        if (event.results[i].isFinal) {
-          finalText += event.results[i][0].transcript
-        } else {
-          interimText += event.results[i][0].transcript
-        }
-      }
-
-      if (finalText) {
-        newMessage.value += finalText
-        tempInterimText.value = ''
-        return
-      }
-
-      // **追加而不是覆盖**
-      tempInterimText.value = interimText
-    } */
-
     recognition.onresult = (event: any) => {
       let finalText = ''
       let interimText = ''
@@ -47,7 +25,8 @@ export function useSpeech(newMessage: any, tempInterimText: any, lastInterimText
       for (let i = event.resultIndex; i < event.results.length; i++) {
         if (event.results[i].isFinal) {
           finalText += event.results[i][0].transcript
-        } else {
+        }
+        else {
           interimText += event.results[i][0].transcript
         }
       }
@@ -70,13 +49,6 @@ export function useSpeech(newMessage: any, tempInterimText: any, lastInterimText
         newMessage.value = tempInterimText.value
         tempInterimText.value = ''
       }
-
-      // **自动重新启动**
-      setTimeout(() => {
-        if (isRecording.value) {
-          recognition.start()
-        }
-      }, 500)
     }
 
     recognition.start()
