@@ -36,7 +36,7 @@ watchEffect(() => {
 })
 
 function send(){
-  // newMessage.value = final.value
+  newMessage.value = final.value
   sendMessage()
   final.value = ''
 }
