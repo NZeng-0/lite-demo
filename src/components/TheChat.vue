@@ -36,8 +36,9 @@ watchEffect(() => {
 })
 
 function send(){
-  final.value = ''
+  // newMessage.value = final.value
   sendMessage()
+  final.value = ''
 }
 
 function adjustHeight() {
